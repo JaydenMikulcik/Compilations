@@ -3,7 +3,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-PATH = r"C:\Users\jjmik\Downloads\chromedriver_win32 (1)\chromedriver.exe"
+PATH = r"C:\Users\jjmik\Desktop\Coding Practice\Selenium python\chromedriver_win32 (2)\chromedriver.exe"
 
 def try_until_done(command):
     while True:

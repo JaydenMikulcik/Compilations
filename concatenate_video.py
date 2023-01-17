@@ -6,12 +6,14 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+
 #import moviepy
 
-PATH = r"C:\Users\jjmik\Downloads\chromedriver_win32 (1)\chromedriver.exe"
+PATH = r"C:\Users\jjmik\Desktop\Coding Practice\Selenium python\chromedriver_win32 (2)\chromedriver.exe"
 DOWNLOAD_PATH = r"C:\Users\jjmik\Downloads"
 VIDEO_PATH = r"C:\Users\jjmik\Videos\CompilationVideos\VideosFolder"
-TEST_URL = r"https://www.tiktok.com/@kagiristwins/video/7167763239156272390?is_copy_url=1&is_from_webapp=v1"
+TEST_URL = r"https://www.tiktok.com/@ocfoodandview/video/7182631359003774254"
 
 chrome_options = webdriver.ChromeOptions()
 
@@ -27,7 +29,21 @@ import os.path
 
 class concat_video(webdriver.Chrome):
 
+    def check_exists_if_click(self, xpath):
+        try:
+            self.find_element(By.XPATH, xpath).click()
+        except NoSuchElementException:
+            return False
+        return True
     
+    def continue_to_check(self, xpath):
+        while True:
+            try:
+                self.find_element(By.XPATH, xpath).click()
+                break
+            except NoSuchElementException:
+                continue
+            
     def download_from_url(self, url):
 
         URL_PATH = r'//*[@id="url"]'
@@ -38,31 +54,42 @@ class concat_video(webdriver.Chrome):
         time.sleep(4)
         self.find_element(By.XPATH, URL_PATH).send_keys(url)
         time.sleep(3)
+        self.check_exists_if_click(SUBMIT_PATH)
         #submit_button = self.find_element(By.XPATH, SUBMIT_PATH)
         #print(submit_button.text)
         #submit_button.click()
         #TODO make it so only do when on new page
         time.sleep(6)
             
-        while True:
-            try:
-                new_download_button = self.find_element(By.XPATH, DOWNLOAD_BUTTON)
-                print(new_download_button.text)
-                new_download_button.click()
-                time.sleep(4)
-                break
-            except:
-                continue
+        #while True:
+        #    try:
+        #        new_download_button = self.find_element(By.XPATH, DOWNLOAD_BUTTON)
+        #        print(new_download_button.text)
+        #        new_download_button.click()
+        #        time.sleep(4)
+        #        break
+        #    except:
+        #        continue
+        self.continue_to_check(DOWNLOAD_BUTTON)
         #move_latest_video()
 
         time.sleep(15)
+        folder_path = DOWNLOAD_PATH
+        while True:
+            file_type = r'\*'
+            files = glob.glob(folder_path + file_type)
+            max_file = max(files, key=os.path.getctime)
+            if not max_file.endswith("crdownload"):
+                return
 
 
 def move_latest_video():
     folder_path = DOWNLOAD_PATH
-    file_type = r'\*.mp4'
+    file_type = r'\*'
     files = glob.glob(folder_path + file_type)
     max_file = max(files, key=os.path.getctime)
+    if not max_file.endswith(".mp4"):
+        return
     max_file_list = max_file.split('\\')
     print(max_file)
 
@@ -84,6 +111,8 @@ def concat_all_from_directory():
 
 
 def main():
+    concat_all_from_directory()
+    return
     #concat_all_from_directory()
     #move_latest_video()
     #move_latest_video()
